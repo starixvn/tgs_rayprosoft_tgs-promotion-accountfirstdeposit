@@ -38,7 +38,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: OTEL_SERVICE_NAME
-              value: Promotion-OfflineDeposit({{ .Release.Namespace }})
+              value: Promotion-Account-First-Deposit({{ .Release.Namespace }})
             - name: NODE_IP
               valueFrom:
                 fieldRef:
@@ -65,12 +65,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 80
+              port: http
             periodSeconds: 5
           startupProbe:
             httpGet:
               path: /healthz
-              port: 80
+              port: http
             periodSeconds: 2
             failureThreshold: 30
           resources:
