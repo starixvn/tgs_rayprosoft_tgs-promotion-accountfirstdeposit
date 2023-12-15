@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.Promotion.AccountFirstDeposit", "Tgs.Promotion.AccountFirstDeposit\Tgs.Promotion.AccountFirstDeposit.csproj", "{2C4BF7F9-2686-4FA5-B055-E3402B80AEEE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountFirstDeposit.Core", "AccountFirstDeposit.Core\AccountFirstDeposit.Core.csproj", "{84C6D68F-3FB9-45FD-8E33-8F3121195919}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "方案項目", "方案項目", "{21BC124C-5C3E-4C29-A15F-38A6D99A2D9C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		nuget.config = nuget.config
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountFirstDeposit.Core.UnitTests", "AccountFirstDeposit.Core.UnitTests\AccountFirstDeposit.Core.UnitTests.csproj", "{026CD048-AC4D-47E2-8181-055A86764391}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountFirstDeposit.Repositories", "AccountFirstDeposit.Repositories\AccountFirstDeposit.Repositories.csproj", "{CE243E18-60B4-4B8E-A97C-8C5EB58A919F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountFirstDeposit.Repositories.UnitTests", "AccountFirstDeposit.Repositories.UnitTests\AccountFirstDeposit.Repositories.UnitTests.csproj", "{67B8822C-00BF-4880-B99B-AE2CCC83A3AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C4BF7F9-2686-4FA5-B055-E3402B80AEEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C4BF7F9-2686-4FA5-B055-E3402B80AEEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C4BF7F9-2686-4FA5-B055-E3402B80AEEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C4BF7F9-2686-4FA5-B055-E3402B80AEEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84C6D68F-3FB9-45FD-8E33-8F3121195919}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84C6D68F-3FB9-45FD-8E33-8F3121195919}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84C6D68F-3FB9-45FD-8E33-8F3121195919}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84C6D68F-3FB9-45FD-8E33-8F3121195919}.Release|Any CPU.Build.0 = Release|Any CPU
+		{026CD048-AC4D-47E2-8181-055A86764391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{026CD048-AC4D-47E2-8181-055A86764391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{026CD048-AC4D-47E2-8181-055A86764391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{026CD048-AC4D-47E2-8181-055A86764391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE243E18-60B4-4B8E-A97C-8C5EB58A919F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE243E18-60B4-4B8E-A97C-8C5EB58A919F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE243E18-60B4-4B8E-A97C-8C5EB58A919F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE243E18-60B4-4B8E-A97C-8C5EB58A919F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67B8822C-00BF-4880-B99B-AE2CCC83A3AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67B8822C-00BF-4880-B99B-AE2CCC83A3AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67B8822C-00BF-4880-B99B-AE2CCC83A3AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67B8822C-00BF-4880-B99B-AE2CCC83A3AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A945737E-7806-4A2B-B10E-7F33F46AC1C1}
+	EndGlobalSection
+EndGlobal
