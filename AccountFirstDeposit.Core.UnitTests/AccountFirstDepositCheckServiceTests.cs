@@ -1,4 +1,5 @@
-﻿using Tgs.Payment.Clients;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Tgs.Payment.Clients;
 using Tgs.Promotion.AccountFirstDeposit;
 using Xunit;
 
@@ -15,7 +16,8 @@ public class AccountFirstDepositCheckServiceTests
 
         var sut = new AccountFirstDepositCheckService(
             fakePaymentServiceClient,
-            fakeFirstLevelRepository);
+            fakeFirstLevelRepository,
+            NullLogger<AccountFirstDepositCheckService>.Instance);
 
         var playerCode = "test1";
 
@@ -47,7 +49,8 @@ public class AccountFirstDepositCheckServiceTests
 
         var sut = new AccountFirstDepositCheckService(
             fakePaymentServiceClient,
-            fakeFirstLevelRepository);
+            fakeFirstLevelRepository,
+            NullLogger<AccountFirstDepositCheckService>.Instance);
 
         var playerCode = "test1";
 
@@ -79,7 +82,8 @@ public class AccountFirstDepositCheckServiceTests
 
         var sut = new AccountFirstDepositCheckService(
             fakePaymentServiceClient,
-            fakeFirstLevelRepository);
+            fakeFirstLevelRepository,
+            NullLogger<AccountFirstDepositCheckService>.Instance);
 
         var playerCode = "test1";
 
@@ -106,7 +110,8 @@ public class AccountFirstDepositCheckServiceTests
 
         var sut = new AccountFirstDepositCheckService(
             fakePaymentServiceClient,
-            fakeFirstLevelRepository);
+            fakeFirstLevelRepository,
+            NullLogger<AccountFirstDepositCheckService>.Instance);
 
         var playerCode = "test1";
 
@@ -127,7 +132,8 @@ public class AccountFirstDepositCheckServiceTests
 
         var sut = new AccountFirstDepositCheckService(
             fakePaymentServiceClient,
-            fakeFirstLevelRepository);
+            fakeFirstLevelRepository,
+            NullLogger<AccountFirstDepositCheckService>.Instance);
 
         var playerCode = "test1";
 
