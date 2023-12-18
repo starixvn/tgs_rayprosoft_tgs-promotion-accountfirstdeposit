@@ -6,8 +6,8 @@ data:
   appsettings.json: |
     {
       "AccountFirstDeposit": {
-        "PromotionServiceUrl": "http://promotion-api",
-        "PaymentServiceUrl": "http://payment-api"
+        "PromotionServiceBaseUrl": "http://promotion-api",
+        "PaymentServiceBaseUrl": "http://payment-api"
       }
     }
 
