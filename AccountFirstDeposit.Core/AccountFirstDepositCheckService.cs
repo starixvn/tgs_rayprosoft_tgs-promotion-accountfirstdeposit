@@ -1,10 +1,12 @@
-﻿using Tgs.Payment.Clients;
+﻿using Microsoft.Extensions.Logging;
+using Tgs.Payment.Clients;
 
 namespace Tgs.Promotion.AccountFirstDeposit;
 
 internal class AccountFirstDepositCheckService(
 	IPaymentServiceClient paymentServiceClient,
-	IFirstLevelRepository firstLevelRepository)
+	IFirstLevelRepository firstLevelRepository,
+	ILogger<AccountFirstDepositCheckService> logger)
 	: IAccountFirstDepositCheckService
 {
 	public async ValueTask<bool> CheckAsync(string playerCode, CancellationToken cancellationToken = default)
@@ -19,6 +21,8 @@ internal class AccountFirstDepositCheckService(
 		var overview = await paymentServiceClient.GetPlayerPaymentOverviewAsync(
 			playerCode,
 			cancellationToken).ConfigureAwait(false);
+
+		logger.LogInformation("PaymentOverview => {overview}", overview);
 
 		if (overview.FirstDepositOn is null)
 			await firstLevelRepository.DecrementFirstDepositAsync(
