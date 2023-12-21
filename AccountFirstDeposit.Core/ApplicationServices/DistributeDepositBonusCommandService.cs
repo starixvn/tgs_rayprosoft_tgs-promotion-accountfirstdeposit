@@ -3,7 +3,9 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.Promotion.AccountFirstDeposit.ApplicationServices;
 
-internal class DistributeDepositBonusCommandService(IPromotionServiceClient promotionServiceClient) : ICommandService<DistributeDepositBonusCommand>
+internal class DistributeDepositBonusCommandService(
+	IPromotionServiceClient promotionServiceClient)
+	: ICommandService<DistributeDepositBonusCommand>
 {
 	public async ValueTask ExecuteAsync(DistributeDepositBonusCommand command, CancellationToken cancellationToken = default)
 	{
@@ -12,16 +14,30 @@ internal class DistributeDepositBonusCommandService(IPromotionServiceClient prom
 
 		var promotionId = command.DepositForm.PromotionId.Value;
 
+		var promotionMainInfo = await promotionServiceClient.GetPromotionMainInfoAsync(
+			command.DepositForm.PromotionId.Value,
+			cancellationToken).ConfigureAwait(false);
+
 		var rule = await promotionServiceClient.GetPromotionRuleAsync<PromotionRule>(
 			promotionId,
 			cancellationToken).ConfigureAwait(false);
 
-		if (rule is null)
+		if (rule is null || promotionMainInfo is null || promotionMainInfo.PromotionType is not "AccountFirstDeposit")
 			return;
 
 		var (bonusAmount, bucketAmount) = CalculateAmount(
 			rule.CampaignDetail,
 			command.DepositForm.ActualAmount ?? command.DepositForm.Amount);
+
+		if (promotionMainInfo.PromotionLimitAmount is not null)
+		{
+			var currentUsedPromotionAmount = await promotionServiceClient.GetPromotionUsedAmountAsync(
+				promotionMainInfo.Id,
+				cancellationToken).ConfigureAwait(false);
+
+			if (currentUsedPromotionAmount >= promotionMainInfo.PromotionLimitAmount.Value)
+				return;
+		}
 
 		var distPlan = await promotionServiceClient.GetPromotionDistributePlanAsync(
 			promotionId,
@@ -36,6 +52,17 @@ internal class DistributeDepositBonusCommandService(IPromotionServiceClient prom
 			null,
 			command.DepositForm.Id,
 			rule.CampaignDetail.BucketTypes,
+			cancellationToken).ConfigureAwait(false);
+
+		var usedAmount = await promotionServiceClient.GetPromotionUsedAmountAsync(
+			promotionMainInfo.Id,
+			cancellationToken).ConfigureAwait(false)
+			+ bonusAmount;
+
+		await promotionServiceClient.UpdatePromotionUsedAmountAsync(
+			promotionMainInfo.Id,
+			usedAmount,
+			null,
 			cancellationToken).ConfigureAwait(false);
 	}
 
