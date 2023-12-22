@@ -1,5 +1,4 @@
-﻿using Google.Protobuf;
-using Tgs.Promotion.AccountFirstDeposit;
+﻿using Tgs.Promotion.AccountFirstDeposit;
 using Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 using Tgs.Promotion.Clients.Protos;
 
@@ -22,7 +21,7 @@ public class TagPromotionHandlerTests
         };
 
         // Act
-        await sut.HandleAsync(request.ToByteArray());
+        await sut.HandleAsync(request);
 
         // Assert
         _ = fakeAccountFirstDepositCheckService.Received(1)

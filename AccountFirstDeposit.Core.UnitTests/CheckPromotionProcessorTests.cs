@@ -25,8 +25,7 @@ public class CheckPromotionProcessorTests
             .Returns(true);
 
         // Act
-        var response = await sut.HandleAsync(request.ToByteArray());
-        var actual = CheckPromotionResponse.Parser.ParseFrom(response.Span);
+        var actual = await sut.HandleAsync(request);
 
         // Assert
         Assert.True(actual.Result);

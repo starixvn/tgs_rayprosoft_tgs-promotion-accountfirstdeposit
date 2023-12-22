@@ -7,14 +7,12 @@ using Valhalla.MessageQueue;
 namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 
 class AccountFirstDepositSettingProcessor(ILogger<AccountFirstDepositSettingProcessor> logger)
-	: IMessageProcessor<ReadOnlyMemory<byte>, ReadOnlyMemory<byte>>
+	: IMessageProcessor<CampaignDetailRequest, CampaignDetailResponse>
 {
-	public ValueTask<ReadOnlyMemory<byte>> HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
+	public ValueTask<CampaignDetailResponse> HandleAsync(CampaignDetailRequest data, CancellationToken cancellationToken = default)
 	{
-		var request = CampaignDetailRequest.Parser.ParseFrom(data.Span);
-
 		var settings = JsonSerializer.Deserialize<DepositRewardSetting>(
-			request.Settings,
+			data.Settings,
 			PromotionUtility.SerializerOptions)
 			?? throw new NullReferenceException("Deserialize DepositRewardSetting is null");
 
@@ -30,6 +28,6 @@ class AccountFirstDepositSettingProcessor(ILogger<AccountFirstDepositSettingProc
 			TurnoverMultiple = settings.TurnoverMultiple
 		};
 
-		return ValueTask.FromResult((ReadOnlyMemory<byte>)response.ToByteArray());
+		return ValueTask.FromResult(response);
 	}
 }

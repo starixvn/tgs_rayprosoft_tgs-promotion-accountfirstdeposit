@@ -9,15 +9,14 @@ namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 internal class DepositFormStatusChangedHandler(
 	IPaymentServiceClient paymentServiceClient,
 	ICommandService<DistributeDepositBonusCommand> distributeService)
-	: IMessageHandler<ReadOnlyMemory<byte>>
+	: IMessageHandler<FormEventEx>
 {
-	public async ValueTask HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
+	public async ValueTask HandleAsync(FormEventEx data, CancellationToken cancellationToken = default)
 	{
-		var request = FormEventEx.Parser.ParseFrom(data.Span);
-		var previousStatus = Enum.Parse<PaymentFlowState>(request.Status);
+		var previousStatus = Enum.Parse<PaymentFlowState>(data.Status);
 
 		var depositForm = await paymentServiceClient.GetDepositFormAsync(
-			request.FormId,
+			data.FormId,
 			cancellationToken).ConfigureAwait(false);
 
 		if (depositForm is null || depositForm.PromotionId is null)

@@ -4,12 +4,8 @@ using Valhalla.MessageQueue;
 namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 
 internal class TagPromotionHandler(IAccountFirstDepositCheckService accountFirstDepositCheckService)
-	: IMessageHandler<ReadOnlyMemory<byte>>
+	: IMessageHandler<CheckPromotionRequest>
 {
-	public ValueTask HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
-	{
-		var request = CheckPromotionRequest.Parser.ParseFrom(data.Span);
-
-		return accountFirstDepositCheckService.TagDepositAsync(request.PlayerCode, cancellationToken);
-	}
+	public ValueTask HandleAsync(CheckPromotionRequest data, CancellationToken cancellationToken = default)
+		=> accountFirstDepositCheckService.TagDepositAsync(data.PlayerCode, cancellationToken);
 }

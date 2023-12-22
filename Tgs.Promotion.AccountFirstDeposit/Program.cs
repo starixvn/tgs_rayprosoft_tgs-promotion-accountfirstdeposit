@@ -6,6 +6,7 @@ using OpenTelemetry.Trace;
 using StackExchange.Redis;
 using Tgs.Promotion;
 using Tgs.Promotion.AccountFirstDeposit.MessageQueue;
+using Tgs.Promotion.AccountFirstDeposit.NatsSerializers;
 
 const string AccountFirstDepositPromotionType = "AccountFirstDeposit";
 
@@ -47,7 +48,8 @@ var builder = WebApplication.CreateBuilder(args);
 			"Nats",
 			(sp, _) => new NatsConnection(NatsOpts.Default with
 			{
-				Url = builder.Configuration.GetConnectionString("Nats")!
+				Url = builder.Configuration.GetConnectionString("Nats")!,
+				SerializerRegistry = AccountFirstDepositSerizerRegistration.Default
 			}))
 		.AddMessageQueue()
 		.AddNatsMessageQueue(natsConfiguration => natsConfiguration
