@@ -3,7 +3,8 @@ using Valhalla.MessageQueue;
 
 namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 
-internal class RollbackPromotionHandler(IAccountFirstDepositCheckService accountFirstDepositCheckService) : IMessageHandler
+internal class RollbackPromotionHandler(IAccountFirstDepositCheckService accountFirstDepositCheckService)
+	: IMessageHandler<ReadOnlyMemory<byte>>
 {
 	public ValueTask HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
 	{

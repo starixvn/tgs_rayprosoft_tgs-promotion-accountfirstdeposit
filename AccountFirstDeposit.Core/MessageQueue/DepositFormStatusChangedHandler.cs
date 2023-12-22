@@ -8,7 +8,8 @@ namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 
 internal class DepositFormStatusChangedHandler(
 	IPaymentServiceClient paymentServiceClient,
-	ICommandService<DistributeDepositBonusCommand> distributeService) : IMessageHandler
+	ICommandService<DistributeDepositBonusCommand> distributeService)
+	: IMessageHandler<ReadOnlyMemory<byte>>
 {
 	public async ValueTask HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
 	{

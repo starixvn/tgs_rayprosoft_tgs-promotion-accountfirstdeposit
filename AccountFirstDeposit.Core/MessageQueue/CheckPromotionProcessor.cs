@@ -4,7 +4,8 @@ using Valhalla.MessageQueue;
 
 namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 
-class CheckPromotionProcessor(IAccountFirstDepositCheckService accountFirstDepositCheckService) : IMessageProcessor
+class CheckPromotionProcessor(IAccountFirstDepositCheckService accountFirstDepositCheckService)
+	: IMessageProcessor<ReadOnlyMemory<byte>, ReadOnlyMemory<byte>>
 {
 	public async ValueTask<ReadOnlyMemory<byte>> HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
 	{

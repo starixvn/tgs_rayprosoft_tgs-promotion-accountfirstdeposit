@@ -1,4 +1,5 @@
 ﻿using FluentdForward.OpenTelemetry.MessagePack;
+using NATS.Client.Core;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -42,14 +43,15 @@ var builder = WebApplication.CreateBuilder(args);
 				builder.Configuration.GetValue<Uri>("AccountFirstDeposit:PaymentServiceBaseUrl")!));
 
 	_ = builder.Services
+		.AddKeyedSingleton(
+			"Nats",
+			(sp, _) => new NatsConnection(NatsOpts.Default with
+			{
+				Url = builder.Configuration.GetConnectionString("Nats")!
+			}))
 		.AddMessageQueue()
 		.AddNatsMessageQueue(natsConfiguration => natsConfiguration
-			.ConfigQueueOptions((options, sp) =>
-			{
-				var config = sp.GetRequiredService<IConfiguration>();
-
-				options.Url = config.GetConnectionString("Nats")!;
-			})
+			.ConfigureResolveConnection(sp => sp.GetRequiredKeyedService<NatsConnection>("Nats"))
 			.AddProcessor(
 				ProcessorTypes.AccountFirstDepositSettingProcessorType,
 				$"tgs.promotion.{AccountFirstDepositPromotionType.ToLowerInvariant()}.setting",
