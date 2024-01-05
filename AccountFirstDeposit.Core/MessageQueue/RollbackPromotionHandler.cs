@@ -6,6 +6,6 @@ namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 internal class RollbackPromotionHandler(IAccountFirstDepositCheckService accountFirstDepositCheckService)
 	: IMessageHandler<CheckPromotionRequest>
 {
-	public ValueTask HandleAsync(CheckPromotionRequest data, CancellationToken cancellationToken = default)
+	public ValueTask HandleAsync(string subject, CheckPromotionRequest data, IEnumerable<MessageHeaderValue>? headerValues, CancellationToken cancellationToken = default)
 		=> accountFirstDepositCheckService.RollbackTagAsync(data.PlayerCode, cancellationToken);
 }

@@ -11,7 +11,7 @@ internal class DepositFormStatusChangedHandler(
 	ICommandService<DistributeDepositBonusCommand> distributeService)
 	: IMessageHandler<FormEventEx>
 {
-	public async ValueTask HandleAsync(FormEventEx data, CancellationToken cancellationToken = default)
+	public async ValueTask HandleAsync(string subject, FormEventEx data, IEnumerable<MessageHeaderValue>? headerValues, CancellationToken cancellationToken = default)
 	{
 		var previousStatus = Enum.Parse<PaymentFlowState>(data.Status);
 

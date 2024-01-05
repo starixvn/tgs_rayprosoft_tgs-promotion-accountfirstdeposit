@@ -6,7 +6,7 @@ namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 class CheckPromotionProcessor(IAccountFirstDepositCheckService accountFirstDepositCheckService)
 	: IMessageProcessor<CheckPromotionRequest, CheckPromotionResponse>
 {
-	public async ValueTask<CheckPromotionResponse> HandleAsync(CheckPromotionRequest data, CancellationToken cancellationToken = default)
+	public async ValueTask<CheckPromotionResponse> HandleAsync(string subject, CheckPromotionRequest data, IEnumerable<MessageHeaderValue>? headerValues, CancellationToken cancellationToken = default)
 	{
 		var result = await accountFirstDepositCheckService.CheckAsync(
 			data.PlayerCode,

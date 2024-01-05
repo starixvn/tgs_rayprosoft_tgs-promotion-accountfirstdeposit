@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Google.Protobuf;
 using Microsoft.Extensions.Logging;
 using Tgs.Promotion.Clients.Protos;
 using Valhalla.MessageQueue;
@@ -9,7 +8,11 @@ namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 class AccountFirstDepositSettingProcessor(ILogger<AccountFirstDepositSettingProcessor> logger)
 	: IMessageProcessor<CampaignDetailRequest, CampaignDetailResponse>
 {
-	public ValueTask<CampaignDetailResponse> HandleAsync(CampaignDetailRequest data, CancellationToken cancellationToken = default)
+	public ValueTask<CampaignDetailResponse> HandleAsync(
+		string subject,
+		CampaignDetailRequest data,
+		IEnumerable<MessageHeaderValue>? headerValues,
+		CancellationToken cancellationToken = default)
 	{
 		var settings = JsonSerializer.Deserialize<DepositRewardSetting>(
 			data.Settings,

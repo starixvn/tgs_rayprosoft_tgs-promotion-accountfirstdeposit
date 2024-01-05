@@ -4,6 +4,6 @@ namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 
 internal class CommitPromotionHandler : IMessageHandler<ReadOnlyMemory<byte>>
 {
-	public ValueTask HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
+	public ValueTask HandleAsync(string subject, ReadOnlyMemory<byte> data, IEnumerable<MessageHeaderValue>? headerValues, CancellationToken cancellationToken = default)
 		=> ValueTask.CompletedTask;
 }

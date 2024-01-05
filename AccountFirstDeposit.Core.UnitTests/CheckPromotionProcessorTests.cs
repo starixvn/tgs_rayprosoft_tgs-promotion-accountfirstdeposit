@@ -25,7 +25,7 @@ public class CheckPromotionProcessorTests
             .Returns(true);
 
         // Act
-        var actual = await sut.HandleAsync(request);
+        var actual = await sut.HandleAsync("test", request, null);
 
         // Assert
         Assert.True(actual.Result);

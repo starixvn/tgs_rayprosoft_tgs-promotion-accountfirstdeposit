@@ -21,7 +21,7 @@ public class TagPromotionHandlerTests
         };
 
         // Act
-        await sut.HandleAsync(request);
+        await sut.HandleAsync("test", request, null);
 
         // Assert
         _ = fakeAccountFirstDepositCheckService.Received(1)
