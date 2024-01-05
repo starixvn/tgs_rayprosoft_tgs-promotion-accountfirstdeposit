@@ -1,4 +1,5 @@
 ﻿using FluentdForward.OpenTelemetry.MessagePack;
+using Microsoft.EntityFrameworkCore;
 using NATS.Client.Core;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -36,12 +37,18 @@ var builder = WebApplication.CreateBuilder(args);
 			"Redis",
 			(sp, _) => sp.GetRequiredKeyedService<IConnectionMultiplexer>("Redis").GetDatabase())
 		.AddAccountFirstDeposit()
-		.AddAccountFirstDepositRepositories(sp => sp.GetRequiredKeyedService<IDatabase>("Redis"))
+		.AddAccountFirstDepositRepositories(
+			dbBuilder => dbBuilder
+				.UseNpgsql("name=Tgs"),
+			sp => sp.GetRequiredKeyedService<IDatabase>("Redis"))
 		.AddPromotionClientServices((opts, _) => opts.Url =
 			builder.Configuration.GetValue<Uri>("AccountFirstDeposit:PromotionServiceBaseUrl")!)
 		.AddPaymentServiceClient(httpBuilder => httpBuilder
 			.ConfigureHttpClient(httpClient => httpClient.BaseAddress =
-				builder.Configuration.GetValue<Uri>("AccountFirstDeposit:PaymentServiceBaseUrl")!));
+				builder.Configuration.GetValue<Uri>("AccountFirstDeposit:PaymentServiceBaseUrl")!))
+		.AddCalculateClient(httpBuilder => httpBuilder
+			.ConfigureHttpClient(httpClient => httpClient.BaseAddress =
+				builder.Configuration.GetValue<Uri>("AccountFirstDeposit:CalculateServiceBaseUrl")!));
 
 	_ = builder.Services
 		.AddKeyedSingleton(

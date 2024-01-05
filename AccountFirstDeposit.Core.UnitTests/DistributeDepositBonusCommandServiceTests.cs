@@ -1,7 +1,9 @@
-﻿using Tgs.Payment.Clients;
+﻿using Tgs.Calculate.Clients;
+using Tgs.Payment.Clients;
 using Tgs.Promotion.AccountFirstDeposit;
 using Tgs.Promotion.AccountFirstDeposit.ApplicationServices;
 using Tgs.Promotion.Clients;
+using Xunit;
 
 namespace AccountFirstDeposit.Core.UnitTests;
 
@@ -12,8 +14,13 @@ public class DistributeDepositBonusCommandServiceTests
     {
         // Arrange
         var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+        var fakeCalculateClient = Substitute.For<ICalculateClient>();
 
-        var sut = new DistributeDepositBonusCommandService(fakePromotionServiceClient);
+        var sut = new DistributeDepositBonusCommandService(
+            fakePromotionServiceClient,
+            fakeTgsRepository,
+            fakeCalculateClient);
 
         var promotionId = Guid.NewGuid();
         var brandId = Guid.NewGuid();
@@ -41,6 +48,17 @@ public class DistributeDepositBonusCommandServiceTests
             10M,
             [1],
             []);
+
+        var calculateId = Guid.NewGuid();
+        _ = fakeTgsRepository.GetPromotionCalculateIdAsync(Arg.Is(promotionId))
+            .Returns(calculateId);
+
+        var snapshotId = Guid.NewGuid();
+        _ = fakeCalculateClient.ExchangeAsync(
+            Arg.Is(calculateId),
+            Arg.Is(100M))
+            .Returns(new ExchangeResult(snapshotId, 200M));
+
         _ = fakePromotionServiceClient.GetPromotionRuleAsync<PromotionRule>(Arg.Is(promotionId))
             .Returns(new PromotionRule(depositRewardSetting));
 
@@ -50,9 +68,6 @@ public class DistributeDepositBonusCommandServiceTests
                 brandId,
                 promotionId,
                 0L));
-
-        _ = fakePromotionServiceClient.GetPromotionUsedAmountAsync(Arg.Is(promotionId))
-            .Returns(100);
 
         // Act
         await sut.ExecuteAsync(command);
@@ -71,7 +86,7 @@ public class DistributeDepositBonusCommandServiceTests
             .UpdatePromotionUsedAmountAsync(
                 Arg.Is(promotionId),
                 Arg.Is(200M),
-                Arg.Is((Guid?)null));
+                Arg.Is(snapshotId));
     }
 
     [Fact]
@@ -79,8 +94,13 @@ public class DistributeDepositBonusCommandServiceTests
     {
         // Arrange
         var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+        var fakeCalculateClient = Substitute.For<ICalculateClient>();
 
-        var sut = new DistributeDepositBonusCommandService(fakePromotionServiceClient);
+        var sut = new DistributeDepositBonusCommandService(
+            fakePromotionServiceClient,
+            fakeTgsRepository,
+            fakeCalculateClient);
 
         var promotionId = Guid.NewGuid();
         var brandId = Guid.NewGuid();
@@ -108,6 +128,17 @@ public class DistributeDepositBonusCommandServiceTests
             10M,
             [1],
             []);
+
+        var calculateId = Guid.NewGuid();
+        _ = fakeTgsRepository.GetPromotionCalculateIdAsync(Arg.Is(promotionId))
+            .Returns(calculateId);
+
+        var snapshotId = Guid.NewGuid();
+        _ = fakeCalculateClient.ExchangeAsync(
+            Arg.Is(calculateId),
+            Arg.Is(1000M))
+            .Returns(new ExchangeResult(snapshotId, 1100M));
+
         _ = fakePromotionServiceClient.GetPromotionRuleAsync<PromotionRule>(Arg.Is(promotionId))
             .Returns(new PromotionRule(depositRewardSetting));
 
@@ -138,7 +169,7 @@ public class DistributeDepositBonusCommandServiceTests
             .UpdatePromotionUsedAmountAsync(
                 Arg.Is(promotionId),
                 Arg.Is(1100M),
-                Arg.Is((Guid?)null));
+                Arg.Is(snapshotId));
     }
 
     [Fact]
@@ -146,8 +177,13 @@ public class DistributeDepositBonusCommandServiceTests
     {
         // Arrange
         var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+        var fakeCalculateClient = Substitute.For<ICalculateClient>();
 
-        var sut = new DistributeDepositBonusCommandService(fakePromotionServiceClient);
+        var sut = new DistributeDepositBonusCommandService(
+            fakePromotionServiceClient,
+            fakeTgsRepository,
+            fakeCalculateClient);
 
         var promotionId = Guid.NewGuid();
         var brandId = Guid.NewGuid();
@@ -176,6 +212,17 @@ public class DistributeDepositBonusCommandServiceTests
             10M,
             [1],
             []);
+
+        var calculateId = Guid.NewGuid();
+        _ = fakeTgsRepository.GetPromotionCalculateIdAsync(Arg.Is(promotionId))
+            .Returns(calculateId);
+
+        var snapshotId = Guid.NewGuid();
+        _ = fakeCalculateClient.ExchangeAsync(
+            Arg.Is(calculateId),
+            Arg.Is(100M))
+            .Returns(new ExchangeResult(snapshotId, 10100M));
+
         _ = fakePromotionServiceClient.GetPromotionRuleAsync<PromotionRule>(Arg.Is(promotionId))
             .Returns(new PromotionRule(depositRewardSetting));
 
@@ -203,12 +250,101 @@ public class DistributeDepositBonusCommandServiceTests
     }
 
     [Fact]
+    public async Task DistributeDepositBonusCommandService_如果活動發放總金額剛好超過則會發放獎金()
+    {
+        // Arrange
+        var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+        var fakeCalculateClient = Substitute.For<ICalculateClient>();
+
+        var sut = new DistributeDepositBonusCommandService(
+            fakePromotionServiceClient,
+            fakeTgsRepository,
+            fakeCalculateClient);
+
+        var promotionId = Guid.NewGuid();
+        var brandId = Guid.NewGuid();
+        var command = new DistributeDepositBonusCommand(new DepositFormInfo
+        {
+            Id = Guid.NewGuid(),
+            Amount = 1000M,
+            PlayerCode = "test1",
+            PromotionId = promotionId,
+            BrandId = brandId
+        });
+        var distributePlanId = Guid.NewGuid();
+
+        _ = fakePromotionServiceClient.GetPromotionMainInfoAsync(Arg.Is(promotionId))
+            .Returns(new PromotionMainInfo
+            {
+                Id = promotionId,
+                PromotionType = "AccountFirstDeposit",
+                EventDuring = (DateTime.Now.AddDays(-1D), DateTime.Now.AddDays(1D)),
+                PromotionLimitAmount = 10000M
+            });
+
+        var depositRewardSetting = new DepositRewardSetting(
+            10M,
+            1000M,
+            10M,
+            [1],
+            []);
+
+        var calculateId = Guid.NewGuid();
+        _ = fakeTgsRepository.GetPromotionCalculateIdAsync(Arg.Is(promotionId))
+            .Returns(calculateId);
+
+        var snapshotId = Guid.NewGuid();
+        _ = fakeCalculateClient.ExchangeAsync(
+            Arg.Is(calculateId),
+            Arg.Is(100M))
+            .Returns(new ExchangeResult(snapshotId, 10050M));
+
+        _ = fakePromotionServiceClient.GetPromotionRuleAsync<PromotionRule>(Arg.Is(promotionId))
+            .Returns(new PromotionRule(depositRewardSetting));
+
+        _ = fakePromotionServiceClient.GetPromotionDistributePlanAsync(Arg.Is(promotionId), Arg.Is(0L))
+            .Returns(new PromotionDistributePlanInfo(
+                distributePlanId,
+                brandId,
+                promotionId,
+                0L));
+
+        _ = fakePromotionServiceClient.GetPromotionUsedAmountAsync(Arg.Is(promotionId))
+            .Returns(100);
+
+        // Act
+        await sut.ExecuteAsync(command);
+
+        // Assert
+        _ = fakePromotionServiceClient.Received(1)
+            .DistributePromotionBonusAsync(
+                Arg.Is(distributePlanId),
+                Arg.Is(command.DepositForm.PlayerCode),
+                Arg.Is(100M),
+                Arg.Is(10000M),
+                Arg.Is((string?)null),
+                Arg.Is(command.DepositForm.Id),
+                Arg.Is(depositRewardSetting.BucketTypes));
+        _ = fakePromotionServiceClient.Received(1)
+            .UpdatePromotionUsedAmountAsync(
+                Arg.Is(promotionId),
+                Arg.Is(10050M),
+                Arg.Is(snapshotId));
+    }
+
+    [Fact]
     public async Task DistributeDepositBonusCommandService_沒有參加活動的存款不會有動作()
     {
         // Arrange
         var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+        var fakeCalculateClient = Substitute.For<ICalculateClient>();
 
-        var sut = new DistributeDepositBonusCommandService(fakePromotionServiceClient);
+        var sut = new DistributeDepositBonusCommandService(
+            fakePromotionServiceClient,
+            fakeTgsRepository,
+            fakeCalculateClient);
 
         var brandId = Guid.NewGuid();
         var command = new DistributeDepositBonusCommand(new DepositFormInfo
@@ -244,8 +380,13 @@ public class DistributeDepositBonusCommandServiceTests
     {
         // Arrange
         var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+        var fakeCalculateClient = Substitute.For<ICalculateClient>();
 
-        var sut = new DistributeDepositBonusCommandService(fakePromotionServiceClient);
+        var sut = new DistributeDepositBonusCommandService(
+            fakePromotionServiceClient,
+            fakeTgsRepository,
+            fakeCalculateClient);
 
         var promotionId = Guid.NewGuid();
         var brandId = Guid.NewGuid();
@@ -301,8 +442,13 @@ public class DistributeDepositBonusCommandServiceTests
     {
         // Arrange
         var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+        var fakeCalculateClient = Substitute.For<ICalculateClient>();
 
-        var sut = new DistributeDepositBonusCommandService(fakePromotionServiceClient);
+        var sut = new DistributeDepositBonusCommandService(
+            fakePromotionServiceClient,
+            fakeTgsRepository,
+            fakeCalculateClient);
 
         var promotionId = Guid.NewGuid();
         var brandId = Guid.NewGuid();

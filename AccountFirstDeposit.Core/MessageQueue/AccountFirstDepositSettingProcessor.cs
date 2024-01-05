@@ -1,19 +1,41 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Tgs.Calculate.Clients;
 using Tgs.Promotion.Clients.Protos;
 using Valhalla.MessageQueue;
 
 namespace Tgs.Promotion.AccountFirstDeposit.MessageQueue;
 
-class AccountFirstDepositSettingProcessor(ILogger<AccountFirstDepositSettingProcessor> logger)
+class AccountFirstDepositSettingProcessor(
+	ITgsRepository tgsRepository,
+	ICalculateClient calculateClient,
+	ILogger<AccountFirstDepositSettingProcessor> logger)
 	: IMessageProcessor<CampaignDetailRequest, CampaignDetailResponse>
 {
-	public ValueTask<CampaignDetailResponse> HandleAsync(
+	public async ValueTask<CampaignDetailResponse> HandleAsync(
 		string subject,
 		CampaignDetailRequest data,
 		IEnumerable<MessageHeaderValue>? headerValues,
 		CancellationToken cancellationToken = default)
 	{
+		var calculateId = await tgsRepository.GetPromotionCalculateIdAsync(
+			data.PromotionId,
+			cancellationToken).ConfigureAwait(false);
+
+		if (calculateId is null)
+		{
+			calculateId = Guid.NewGuid();
+
+			_ = await calculateClient.CreateCalculateAsync(
+				calculateId.Value,
+				cancellationToken).ConfigureAwait(false);
+
+			await tgsRepository.SetPromotionCalculateIdAsync(
+				data.PromotionId,
+				calculateId.Value,
+				cancellationToken).ConfigureAwait(false);
+		}
+
 		var settings = JsonSerializer.Deserialize<DepositRewardSetting>(
 			data.Settings,
 			PromotionUtility.SerializerOptions)
@@ -31,6 +53,6 @@ class AccountFirstDepositSettingProcessor(ILogger<AccountFirstDepositSettingProc
 			TurnoverMultiple = settings.TurnoverMultiple
 		};
 
-		return ValueTask.FromResult(response);
+		return response;
 	}
 }
