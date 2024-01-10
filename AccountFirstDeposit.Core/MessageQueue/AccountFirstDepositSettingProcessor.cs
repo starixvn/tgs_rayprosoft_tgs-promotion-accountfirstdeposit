@@ -43,6 +43,11 @@ class AccountFirstDepositSettingProcessor(
 
 		logger.LogDebug("Account deposit setting : {settings}", settings);
 
+		settings = settings with
+		{
+			BucketTypes = settings.BucketTypes?.Where(v => !string.IsNullOrWhiteSpace(v)).ToArray()
+		};
+
 		var response = new CampaignDetailResponse
 		{
 			CampaignDetail = JsonSerializer.Serialize(
