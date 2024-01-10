@@ -8,7 +8,7 @@ data:
       "AccountFirstDeposit": {
         "PromotionServiceBaseUrl": "http://promotion-api",
         "PaymentServiceBaseUrl": "http://payment-api",
-        "CalculateServiceBaseUrl": "tgs-calculate-api"
+        "CalculateServiceBaseUrl": "http://tgs-calculate-api"
       }
     }
 
