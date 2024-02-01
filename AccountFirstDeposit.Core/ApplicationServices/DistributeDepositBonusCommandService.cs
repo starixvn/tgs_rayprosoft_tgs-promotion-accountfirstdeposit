@@ -30,7 +30,7 @@ internal class DistributeDepositBonusCommandService(
 
 		var (bonusAmount, bucketAmount) = CalculateAmount(
 			rule.CampaignDetail,
-			command.DepositForm.ActualAmount ?? command.DepositForm.Amount);
+			command.DepositForm.ApplyAmount);
 
 		var calculateId = await tgsRepository.GetPromotionCalculateIdAsync(
 			promotionMainInfo.Id,

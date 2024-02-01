@@ -30,7 +30,8 @@ public class DistributeDepositBonusCommandServiceTests
             Amount = 1000M,
             PlayerCode = "test1",
             PromotionId = promotionId,
-            BrandId = brandId
+            BrandId = brandId,
+            ApplyAmount = 1000M
         });
         var distributePlanId = Guid.NewGuid();
 
@@ -110,7 +111,8 @@ public class DistributeDepositBonusCommandServiceTests
             Amount = 100000M,
             PlayerCode = "test1",
             PromotionId = promotionId,
-            BrandId = brandId
+            BrandId = brandId,
+            ApplyAmount = 100000M
         });
         var distributePlanId = Guid.NewGuid();
 
@@ -190,10 +192,11 @@ public class DistributeDepositBonusCommandServiceTests
         var command = new DistributeDepositBonusCommand(new DepositFormInfo
         {
             Id = Guid.NewGuid(),
-            Amount = 1000M,
+            Amount = 1100M,
             PlayerCode = "test1",
             PromotionId = promotionId,
-            BrandId = brandId
+            BrandId = brandId,
+            ApplyAmount = 1000M
         });
         var distributePlanId = Guid.NewGuid();
 
@@ -267,10 +270,11 @@ public class DistributeDepositBonusCommandServiceTests
         var command = new DistributeDepositBonusCommand(new DepositFormInfo
         {
             Id = Guid.NewGuid(),
-            Amount = 1000M,
+            Amount = 1100M,
             PlayerCode = "test1",
             PromotionId = promotionId,
-            BrandId = brandId
+            BrandId = brandId,
+            ApplyAmount = 1000M
         });
         var distributePlanId = Guid.NewGuid();
 
